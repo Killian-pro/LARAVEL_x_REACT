@@ -20,4 +20,9 @@ class UserWallet extends Model
     {
         return $this->belongsTo(Drug::class);
     }
+
+    public function takingMedications()
+    {
+        return $this->hasMany(TakingMedication::class, 'user_id');
+    }
 }

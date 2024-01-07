@@ -4,22 +4,30 @@ import Register from "./screens/Register";
 import NotFound from "./screens/NotFound";
 import HomePage from "./screens/HomePage";
 
+function AuthRoutes() {
+    return (
+        <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+        </Routes>
+    );
+}
+
+function OtherRoutes() {
+    return (
+        <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="*" element={<NotFound />} />
+        </Routes>
+    );
+}
+
 function App() {
     const hasToken = !!localStorage.getItem("token");
 
     return (
         <BrowserRouter>
-            <Routes>
-                {hasToken ? (
-                    <>
-                        <Route path="/login" element={<Login />} />
-                        <Route path="/register" element={<Register />} />
-                    </>
-                ) : (
-                    <Route path="/" element={<HomePage />} />
-                )}
-                <Route path="*" element={<NotFound />} />
-            </Routes>
+            {hasToken ? <OtherRoutes /> : <AuthRoutes />}
         </BrowserRouter>
     );
 }

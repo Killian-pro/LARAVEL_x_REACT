@@ -25,6 +25,7 @@ Route::middleware('auth:sanctum')->group(function () {
     //RAJOUTEr FCT NEED AUtH
     Route::get('/showUserWallet', [UserController::class, 'showUserWallet']);
     Route::post('/addToUserWallet', [UserController::class, 'addToUserWallet']);
+    Route::post('/takingMedication/{id}', [UserController::class, 'takingMedication']);
 });
 Route::post('/signup', [AuthController::class, 'signup']);
 Route::post('/login', [AuthController::class, 'login']);

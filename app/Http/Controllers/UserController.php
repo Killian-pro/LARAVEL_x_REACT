@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AddToUserWalletRequest;
+use App\Http\Requests\TakingMedicationRequest;
 use App\Http\Resources\UserWalletRessource;
 use Illuminate\Support\Facades\Auth;
 
@@ -23,7 +24,7 @@ class UserController extends Controller
     {
         $user = Auth::user();
 
-        $userWallets = $user->userWallets()->orderBy('id', 'desc')->paginate(10);
+        $userWallets = $user->userWallets()->with('drug')->orderBy('id', 'desc')->paginate(10);
 
         return UserWalletRessource::collection($userWallets);
     }
@@ -38,5 +39,22 @@ class UserController extends Controller
         $userWallet = $user->userWallets()->create($data);
 
         return new UserWalletRessource($userWallet);
+    }
+
+    public function takingMedication(TakingMedicationRequest $request)
+    {
+        $user = Auth::user();
+
+        $userWallet = $user->userWallets()->findOrFail($request->route('id'));
+
+        $data = $request->validated();
+
+        $data['user_id'] = $userWallet->id;
+
+        $data['drug_id'] = $userWallet->drug_id;
+
+        $user->takingMedication()->create($data);
+
+        return response('', 201);
     }
 }

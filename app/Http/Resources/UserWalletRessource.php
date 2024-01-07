@@ -16,8 +16,22 @@ class UserWalletRessource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'name' => $this->drug->name,
             'outdated_date' => $this->outdated_date,
             'nb_in_box' => $this->nb_in_box,
+            'last_use' => $this->lastUseTimestamp()
         ];
+    }
+
+    /**
+     * get last use
+     *
+     * @return string|null
+     */
+    protected function lastUseTimestamp()
+    {
+        $lastTaking = $this->takingMedications->sortByDesc('created_at')->first();
+
+        return $lastTaking ? $lastTaking->created_at->format('Y-m-d H:i:s') : null;
     }
 }
