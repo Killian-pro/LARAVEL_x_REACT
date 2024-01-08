@@ -1,6 +1,7 @@
 import { useState } from "react";
+import axiosClient from "../api/axiosClient";
 
-const Card = ({ name, dateEnd, number, dateLast }) => {
+const Card = ({ id, name, dateEnd, number, dateLast }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [counter, setCounter] = useState(1);
 
@@ -14,18 +15,13 @@ const Card = ({ name, dateEnd, number, dateLast }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // try {
-        //     await axiosClient.post("/addToUserWallet", formData).then(() => {
-        //         setFormData({
-        //             drug_id: "",
-        //             outdated_date: "",
-        //             nb_in_box: "",
-        //         });
-        //         location.reload();
-        //     });
-        // } catch (error) {
-        //     console.error(error);
-        // }
+        try {
+            await axiosClient.post("/takingMedication/" + id).then(() => {
+                location.reload();
+            });
+        } catch (error) {
+            console.error(error);
+        }
         handleCloseModal();
     };
 
@@ -47,10 +43,7 @@ const Card = ({ name, dateEnd, number, dateLast }) => {
 
     return (
         <div>
-            <div
-                className="p-4 w-80 bg-white transition-transform duration-300 hover:scale-105 rounded-md shadow-md m-4 flex flex-col items-center justify-center text-center cursor-pointer"
-                onClick={handleOpenModal}
-            >
+            <div className="p-4 w-80 bg-white transition-transform duration-300 hover:scale-105 rounded-md shadow-md m-4 flex flex-col items-center justify-center text-center cursor-pointer">
                 <div className="flex gap-1 items-center">
                     <div className="text-sm text-blue-500 mb-2">Nom : </div>
                     <div className="text-lg text-blue-500 mb-2">{name} </div>
@@ -90,7 +83,7 @@ const Card = ({ name, dateEnd, number, dateLast }) => {
             {isModalOpen && (
                 <div
                     onClick={handleCloseModalOutsideClick}
-                    className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center"
+                    className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50"
                 >
                     <div className="bg-white p-8 rounded shadow-md w-96">
                         <h2 className="text-2xl text-blue-500 font-semibold mb-4">
