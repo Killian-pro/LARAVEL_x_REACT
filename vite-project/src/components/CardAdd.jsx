@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axiosClient from "../api/axiosClient";
 
-const CardAdd = () => {
+const CardAdd = ({ reloadMedic }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [formData, setFormData] = useState({
         drug_id: "",
@@ -25,17 +25,17 @@ const CardAdd = () => {
         e.preventDefault();
         try {
             await axiosClient.post("/addToUserWallet", formData).then(() => {
+                reloadMedic();
                 setFormData({
                     drug_id: "",
                     outdated_date: "",
                     nb_in_box: "",
                 });
-                location.reload();
+                handleCloseModal();
             });
         } catch (error) {
             console.error(error);
         }
-        handleCloseModal();
     };
 
     const handleCloseModalOutsideClick = (e) => {
@@ -62,7 +62,7 @@ const CardAdd = () => {
             {isModalOpen && (
                 <div
                     onClick={handleCloseModalOutsideClick}
-                    className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center"
+                    className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50"
                 >
                     <div className="bg-white p-8 rounded shadow-md w-96">
                         <h2 className="text-2xl font-semibold mb-4">

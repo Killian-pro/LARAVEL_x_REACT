@@ -5,34 +5,27 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import frLocale from "@fullcalendar/core/locales/fr";
 
 const Calendar = ({ events }) => {
-    const eventsTitle = events.map((item) => {
+    const eventsTitle = events.map(({ name, ...rest }) => {
         return {
-            ...item,
-            title: item.name,
+            ...rest,
+            title: name,
         };
     });
 
     const headerToolbar = {
         left: "prev,next today",
         center: "title",
-        right: "dayGridMonth,dayGridWeek,listWeek",
-    };
-
-    const views = {
-        listWeek: {
-            duration: { weeks: 53 },
-        },
+        right: "dayGridMonth,dayGridWeek,listYear",
     };
 
     return (
         <div className="p-8 h-screen">
             <FullCalendar
                 plugins={[listPlugin, multiMonthPlugin, dayGridPlugin]}
-                initialView="dayGridMonth"
+                initialView="listYear"
                 events={eventsTitle}
                 height={"100%"}
                 headerToolbar={headerToolbar}
-                views={views}
                 locale={frLocale}
             />
         </div>

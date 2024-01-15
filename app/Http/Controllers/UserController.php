@@ -47,14 +47,23 @@ class UserController extends Controller
 
         $userWallet = $user->userWallets()->findOrFail($request->route('id'));
 
-        $data = $request->validated();
+        if ($userWallet->nb_in_box > 0) {
 
-        $data['user_id'] = $userWallet->id;
+            $data = $request->validated();
 
-        $data['drug_id'] = $userWallet->drug_id;
+            $data['user_id'] = $userWallet->id;
 
-        $user->takingMedication()->create($data);
+            $data['drug_id'] = $userWallet->drug_id;
 
-        return response('', 201);
+            $user->takingMedication()->create($data);
+
+            $nbBox = $request->input('nb_box', 1);
+
+            $userWallet->decrement('nb_in_box', $nbBox);
+
+            return response('', 201);
+        } else {
+            return response('Box empty', 405);
+        }
     }
 }

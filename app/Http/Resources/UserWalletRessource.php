@@ -19,7 +19,7 @@ class UserWalletRessource extends JsonResource
             'name' => $this->drug->name,
             'outdated_date' => $this->outdated_date,
             'nb_in_box' => $this->nb_in_box,
-            'last_use' => $this->lastUseTimestamp()
+            'last_use' => $this->lastUseTimestamp(),
         ];
     }
 

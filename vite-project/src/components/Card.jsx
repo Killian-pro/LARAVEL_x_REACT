@@ -1,7 +1,8 @@
 import { useState } from "react";
 import axiosClient from "../api/axiosClient";
 
-const Card = ({ id, name, dateEnd, number, dateLast }) => {
+const Card = ({ id, name, dateEnd, number, dateLast, reloadMedic }) => {
+    const currentDate = new Date();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [counter, setCounter] = useState(1);
 
@@ -17,7 +18,7 @@ const Card = ({ id, name, dateEnd, number, dateLast }) => {
         e.preventDefault();
         try {
             await axiosClient.post("/takingMedication/" + id).then(() => {
-                location.reload();
+                reloadMedic();
             });
         } catch (error) {
             console.error(error);
@@ -41,9 +42,23 @@ const Card = ({ id, name, dateEnd, number, dateLast }) => {
         }
     };
 
+    console.log(dateEnd, currentDate, dateEnd < currentDate);
     return (
         <div>
-            <div className="p-4 w-80 bg-white transition-transform duration-300 hover:scale-105 rounded-md shadow-md m-4 flex flex-col items-center justify-center text-center cursor-pointer">
+            <div className="relative p-4 w-80 bg-white transition-transform duration-300 hover:scale-105 rounded-md shadow-md m-4 flex flex-col items-center justify-center text-center cursor-pointer">
+                {new Date(dateEnd) < currentDate ? (
+                    <div>
+                        <div className="absolute top-0 left-0 w-full h-1/4 bg-red-200 opacity-50"></div>
+                        <div className="absolute top-1/4 left-0 w-full h-1/4 bg-white opacity-50"></div>
+                        <div className="absolute top-1/2 left-0 w-full h-1/4 bg-red-200 opacity-50"></div>
+                        <div className="absolute bottom-0 left-0 w-full h-1/4 bg-white opacity-50"></div>
+                        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-red-500 font-bold">
+                            Périmé
+                        </div>
+                    </div>
+                ) : (
+                    <></>
+                )}
                 <div className="flex gap-1 items-center">
                     <div className="text-sm text-blue-500 mb-2">Nom : </div>
                     <div className="text-lg text-blue-500 mb-2">{name} </div>
@@ -73,6 +88,7 @@ const Card = ({ id, name, dateEnd, number, dateLast }) => {
                         Voir
                     </button>
                     <button
+                        disabled={number < 1}
                         onClick={handleOpenModal}
                         className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
                     >
