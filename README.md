@@ -13,6 +13,8 @@ npm run dev
 ## create table
 
 php artisan make:migration name
+or
+php artisan make:migration name --table=tablename
 in the migration add the data model
 
 ```php

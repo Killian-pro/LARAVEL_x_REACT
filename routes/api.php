@@ -28,6 +28,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/showUserTakingMedication', [TakingMedicationController::class, 'showUserTakingMedication']);
     Route::post('/addToUserWallet', [UserController::class, 'addToUserWallet']);
     Route::post('/takingMedication/{id}', [UserController::class, 'takingMedication']);
+    Route::get('/searchDrug', [DrugsController::class, 'searchDrug']);
 });
 Route::post('/signup', [AuthController::class, 'signup']);
 Route::post('/login', [AuthController::class, 'login']);

@@ -17,7 +17,7 @@ class TakingMedicationController extends Controller
     {
         $user = Auth::user();
 
-        $UserTakingMedication = $user->takingMedication()->with('drug')->orderBy('id', 'asc')->paginate(10);
+        $UserTakingMedication = $user->takingMedication()->with('drug')->orderBy('id', 'asc')->get();
 
         return TakingMedicationRessource::collection($UserTakingMedication);
     }

@@ -1,19 +1,41 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axiosClient from "../api/axiosClient";
 
 const CardAdd = ({ reloadMedic }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [searchResults, setSearchResults] = useState([]);
+    const [searchTerm, setSearchTerm] = useState({
+        name: "",
+        id: "",
+    });
     const [formData, setFormData] = useState({
         drug_id: "",
         outdated_date: "",
         nb_in_box: "",
     });
 
+    useEffect(() => {
+        if (searchTerm.id !== formData.drug_id) {
+            fetchData();
+        } else {
+            setSearchResults([]);
+        }
+    }, [searchTerm]);
+
     const handleOpenModal = () => {
         setIsModalOpen(true);
     };
 
     const handleCloseModal = () => {
+        setFormData({
+            drug_id: "",
+            outdated_date: "",
+            nb_in_box: "",
+        });
+        setSearchTerm({
+            name: "",
+            id: "",
+        });
         setIsModalOpen(false);
     };
 
@@ -21,16 +43,22 @@ const CardAdd = ({ reloadMedic }) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
+    const fetchData = async () => {
+        try {
+            const response = await axiosClient.get(
+                `http://localhost:8000/api/searchDrug?term=${searchTerm.name}`
+            );
+            setSearchResults(response.data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
             await axiosClient.post("/addToUserWallet", formData).then(() => {
                 reloadMedic();
-                setFormData({
-                    drug_id: "",
-                    outdated_date: "",
-                    nb_in_box: "",
-                });
                 handleCloseModal();
             });
         } catch (error) {
@@ -42,6 +70,15 @@ const CardAdd = ({ reloadMedic }) => {
         if (e.target.classList.contains("bg-gray-500")) {
             handleCloseModal();
         }
+    };
+
+    const handleItemClick = (result) => {
+        setFormData({
+            ...formData,
+            drug_id: result.id,
+        });
+        setSearchTerm({ name: result.name, id: result.id });
+        setSearchResults([]);
     };
 
     return (
@@ -70,20 +107,67 @@ const CardAdd = ({ reloadMedic }) => {
                         </h2>
                         <form onSubmit={handleSubmit}>
                             <div className="mb-4">
-                                <label
-                                    htmlFor="drug_id"
-                                    className="block text-blue-500 text-sm mb-2"
-                                >
-                                    Drug ID
-                                </label>
-                                <input
-                                    type="text"
-                                    id="drug_id"
-                                    name="drug_id"
-                                    value={formData.drug_id}
-                                    onChange={handleChange}
-                                    className="w-full border p-2 rounded"
-                                />
+                                <div className="mb-4 relative">
+                                    <label
+                                        htmlFor="drug_id"
+                                        className="block text-blue-500 text-sm mb-2"
+                                    >
+                                        Médicament
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="drug_id"
+                                        name="drug_id"
+                                        value={searchTerm.name}
+                                        onChange={(e) => {
+                                            setSearchTerm({
+                                                name: e.target.value,
+                                            });
+                                        }}
+                                        className="w-full border p-2 rounded"
+                                        placeholder="Recherchez un médicament..."
+                                    />
+                                    {searchResults.length > 0 ? (
+                                        <ul className="absolute top-full left-0 bg-white border border-gray-300 rounded-b-md shadow-md mt-1 w-full">
+                                            {searchResults.map((result) => (
+                                                <li
+                                                    onClick={() =>
+                                                        handleItemClick(result)
+                                                    }
+                                                    key={result.id}
+                                                    className="text-blue-950 p-2 cursor-pointer hover:bg-gray-200"
+                                                >
+                                                    {result.name}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    ) : (
+                                        searchResults.length == 0 &&
+                                        searchTerm.id !== formData.drug_id &&
+                                        searchTerm.name && (
+                                            <ul className="absolute top-full left-0 bg-white border border-gray-300 rounded-b-md shadow-md mt-1 w-full">
+                                                <li className="text-blue-950 p-2 cursor-pointer hover:bg-gray-200">
+                                                    Aucun résultat
+                                                    <div className="text-blue-500 text-xs right-2 absolute bottom-0">
+                                                        + créé un nouveau
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        )
+                                    )}
+                                </div>
+                                {searchResults.length > 0 && (
+                                    <ul>
+                                        {searchResults.map((result) => (
+                                            <li
+                                                className="text-black"
+                                                key={result.id}
+                                            >
+                                                {result.name}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
                             </div>
                             <div className="mb-4">
                                 <label

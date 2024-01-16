@@ -24,7 +24,7 @@ class UserController extends Controller
     {
         $user = Auth::user();
 
-        $userWallets = $user->userWallets()->with('drug')->orderBy('id', 'asc')->paginate(10);
+        $userWallets = $user->userWallets()->where('isDisabled', false)->with('drug')->orderBy('id', 'asc')->paginate(10);
 
         return UserWalletRessource::collection($userWallets);
     }
