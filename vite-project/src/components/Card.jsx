@@ -1,7 +1,15 @@
 import { useState } from "react";
 import axiosClient from "../api/axiosClient";
 
-const Card = ({ id, name, dateEnd, number, dateLast, reloadMedic }) => {
+const Card = ({
+    id,
+    drug,
+    dateEnd,
+    number,
+    dateLast,
+    reloadMedic,
+    getDataTakingMedicByID,
+}) => {
     const currentDate = new Date();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [counter, setCounter] = useState(1);
@@ -42,12 +50,33 @@ const Card = ({ id, name, dateEnd, number, dateLast, reloadMedic }) => {
         }
     };
 
-    console.log(dateEnd, currentDate, dateEnd < currentDate);
+    async function disabledCard() {
+        try {
+            await axiosClient.put("/disabledProduct/" + id).then(() => {
+                reloadMedic();
+            });
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
     return (
         <div>
-            <div className="relative p-4 w-80 bg-white transition-transform duration-300 hover:scale-105 rounded-md shadow-md m-4 flex flex-col items-center justify-center text-center cursor-pointer">
+            <div
+                className={`relative p-4 w-80 bg-white ${
+                    new Date(dateEnd) < currentDate
+                        ? "transition-none"
+                        : "transition-transform duration-300 hover:scale-105"
+                } rounded-md shadow-md m-4 flex flex-col items-center justify-center text-center cursor-pointer`}
+            >
                 {new Date(dateEnd) < currentDate ? (
-                    <div>
+                    <div className="cursor-default">
+                        <div
+                            onClick={disabledCard}
+                            className="bg-black left-2 top-2 absolute z-10 cursor-pointer"
+                        >
+                            Show Off
+                        </div>
                         <div className="absolute top-0 left-0 w-full h-1/4 bg-red-200 opacity-50"></div>
                         <div className="absolute top-1/4 left-0 w-full h-1/4 bg-white opacity-50"></div>
                         <div className="absolute top-1/2 left-0 w-full h-1/4 bg-red-200 opacity-50"></div>
@@ -61,7 +90,9 @@ const Card = ({ id, name, dateEnd, number, dateLast, reloadMedic }) => {
                 )}
                 <div className="flex gap-1 items-center">
                     <div className="text-sm text-blue-500 mb-2">Nom : </div>
-                    <div className="text-lg text-blue-500 mb-2">{name} </div>
+                    <div className="text-lg text-blue-500 mb-2">
+                        {drug.name}
+                    </div>
                 </div>
                 <div className="flex gap-1 items-center">
                     <div className="text-sm text-blue-500 mb-2">
@@ -84,7 +115,10 @@ const Card = ({ id, name, dateEnd, number, dateLast, reloadMedic }) => {
                     </div>
                 </div>
                 <div className="flex justify-between mt-4 gap-2">
-                    <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                    <button
+                        onClick={() => getDataTakingMedicByID(drug.id)}
+                        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                    >
                         Voir
                     </button>
                     <button

@@ -34,6 +34,15 @@ export default function HomePage() {
         });
     }
 
+    async function getDataTakingMedicByID(id) {
+        console.log(id);
+        await axiosClient
+            .get("/ShowOnlyOneUserTakingMedication/" + id)
+            .then((res) => {
+                setDateMedication(res.data.data);
+            });
+    }
+
     return (
         <div className="flex max-h-screen bg-slate-950">
             <div
@@ -47,11 +56,12 @@ export default function HomePage() {
                     <div key={index}>
                         <Card
                             id={it.id}
-                            name={it.name}
+                            drug={it.drug}
                             dateEnd={it.outdated_date}
                             number={it.nb_in_box}
                             dateLast={it.last_use}
                             reloadMedic={reloadMedic}
+                            getDataTakingMedicByID={getDataTakingMedicByID}
                         />
                     </div>
                 ))}

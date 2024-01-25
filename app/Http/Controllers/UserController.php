@@ -66,4 +66,13 @@ class UserController extends Controller
             return response('Box empty', 405);
         }
     }
+
+    public function disabledProduct(TakingMedicationRequest $request)
+    {
+        $user = Auth::user();
+
+        $userWallet = $user->userWallets()->findOrFail($request->route('id'));
+
+        $userWallet->update(['isDisabled' => true]);
+    }
 }

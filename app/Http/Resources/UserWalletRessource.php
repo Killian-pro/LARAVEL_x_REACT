@@ -16,10 +16,11 @@ class UserWalletRessource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'name' => $this->drug->name,
+            'drug' => $this->drug,
             'outdated_date' => $this->outdated_date,
             'nb_in_box' => $this->nb_in_box,
             'last_use' => $this->lastUseTimestamp(),
+            'isDisabled' => (bool) $this->isDisabled,
         ];
     }
 
